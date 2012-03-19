@@ -36,6 +36,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.SystemProperties;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -53,6 +54,7 @@ import java.io.OutputStream;
 
 public class SuRequestActivity extends Activity implements OnClickListener {
     private static final String TAG = "Su.SuRequestActivity";
+    private static final String ROOT_ACCESS_PROPERTY = "persist.sys.root_access";
 
     private LocalSocket mSocket;
     private SharedPreferences mPrefs;
@@ -79,6 +81,13 @@ public class SuRequestActivity extends Activity implements OnClickListener {
 
         if (this.getCallingPackage() != null) {
             Log.e(TAG, "SuRequest must be started from su");
+            finish();
+            return;
+        }
+
+        String root_access = SystemProperties.get(ROOT_ACCESS_PROPERTY, "1");
+        if (Integer.valueOf(root_access) < 1) {
+            Log.e(TAG, "SuRequest denied by system settings");
             finish();
             return;
         }

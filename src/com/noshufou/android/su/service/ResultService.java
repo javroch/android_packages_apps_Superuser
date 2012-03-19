@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
+import android.os.SystemProperties;
 
 import com.noshufou.android.su.HomeActivity;
 import com.noshufou.android.su.R;
@@ -42,6 +43,8 @@ public class ResultService extends IntentService {
     private static final int COLUMN_ALLOW = 1;
     private static final int COLUMN_NOTIFICATIONS = 2;
     private static final int COLUMN_LOGGING = 3;
+
+    private static final String ROOT_ACCESS_PROPERTY = "persist.sys.root_access";
 
     // TODO: Add in a license check here
 //    private boolean mLicenseChecked = false;
@@ -78,22 +81,27 @@ public class ResultService extends IntentService {
             String appNotify = null;
             String appLog = null;
 
-            // get what we need from the database
-            Cursor c = getContentResolver().query(
-                    Uri.withAppendedPath(Apps.CONTENT_URI,
-                            "uid/" + callerUid),
-                    PROJECTION,
-                    null, null, null);
-            if (c != null && c.moveToFirst()) {
-                appId = c.getLong(COLUMN_ID);
-                appNotify = c.getString(COLUMN_NOTIFICATIONS);
-                appLog = c.getString(COLUMN_LOGGING);
-                int dbAllow = c.getInt(COLUMN_ALLOW);
-                if (dbAllow != -1) {
-                    allow = dbAllow;
-                }
+            String root_access = SystemProperties.get(ROOT_ACCESS_PROPERTY, "1");
+            if (Integer.valueOf(root_access) < 1) {
+                allow = 0;
+            } else {
+		        // get what we need from the database
+		        Cursor c = getContentResolver().query(
+		                Uri.withAppendedPath(Apps.CONTENT_URI,
+		                        "uid/" + callerUid),
+		                PROJECTION,
+		                null, null, null);
+		        if (c != null && c.moveToFirst()) {
+		            appId = c.getLong(COLUMN_ID);
+		            appNotify = c.getString(COLUMN_NOTIFICATIONS);
+		            appLog = c.getString(COLUMN_LOGGING);
+		            int dbAllow = c.getInt(COLUMN_ALLOW);
+		            if (dbAllow != -1) {
+		                allow = dbAllow;
+		            }
+		        }
+		        c.close();
             }
-            c.close();
 
             sendNotification(appId, callerUid, allow, currentTime, appNotify);
             addLog(appId, callerUid, intent.getIntExtra(SuRequestReceiver.EXTRA_UID, 0),
