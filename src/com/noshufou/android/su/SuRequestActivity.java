@@ -85,8 +85,8 @@ public class SuRequestActivity extends Activity implements OnClickListener {
             return;
         }
 
-        String root_access = SystemProperties.get(ROOT_ACCESS_PROPERTY, "1");
-        if (Integer.valueOf(root_access) < 1) {
+        int root_access = Integer.valueOf(SystemProperties.get(ROOT_ACCESS_PROPERTY, "1"));
+        if (root_access == 0 || root_access == 2) { //disabled / adb only
             Log.e(TAG, "SuRequest denied by system settings");
             finish();
             return;
