@@ -81,8 +81,8 @@ public class ResultService extends IntentService {
             String appNotify = null;
             String appLog = null;
 
-            String root_access = SystemProperties.get(ROOT_ACCESS_PROPERTY, "1");
-            if (Integer.valueOf(root_access) < 1) {
+            int root_access = Integer.valueOf(SystemProperties.get(ROOT_ACCESS_PROPERTY, "1"));
+            if (root_access == 0 || root_access == 2) { //disabled / adb only
                 allow = 0;
             } else {
 		        // get what we need from the database
