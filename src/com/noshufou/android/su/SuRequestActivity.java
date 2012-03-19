@@ -55,6 +55,7 @@ import java.io.OutputStream;
 public class SuRequestActivity extends Activity implements OnClickListener {
     private static final String TAG = "Su.SuRequestActivity";
     private static final String ROOT_ACCESS_PROPERTY = "persist.sys.root_access";
+    private static final String ROOT_SETTINGS_PROPERTY = "ro.root.settings";
 
     private LocalSocket mSocket;
     private SharedPreferences mPrefs;
@@ -85,12 +86,15 @@ public class SuRequestActivity extends Activity implements OnClickListener {
             return;
         }
 
-        int root_access = Integer.valueOf(SystemProperties.get(ROOT_ACCESS_PROPERTY, "1"));
-        if (root_access == 0 || root_access == 2) { //disabled / adb only
-            Log.e(TAG, "SuRequest denied by system settings");
-            finish();
-            return;
-        }
+		String root_settings = SystemProperties.get(ROOT_SETTINGS_PROPERTY, "");
+		if ("1".equals(root_settings)) {
+		    int root_access = Integer.valueOf(SystemProperties.get(ROOT_ACCESS_PROPERTY, "1"));
+		    if ((root_access & 1) != 1) { //disabled / adb only (even values)
+		        Log.e(TAG, "SuRequest denied by system settings");
+		        finish();
+		        return;
+		    }
+		}
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 

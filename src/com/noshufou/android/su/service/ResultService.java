@@ -45,6 +45,7 @@ public class ResultService extends IntentService {
     private static final int COLUMN_LOGGING = 3;
 
     private static final String ROOT_ACCESS_PROPERTY = "persist.sys.root_access";
+    private static final String ROOT_SETTINGS_PROPERTY = "ro.root.settings";
 
     // TODO: Add in a license check here
 //    private boolean mLicenseChecked = false;
@@ -81,8 +82,9 @@ public class ResultService extends IntentService {
             String appNotify = null;
             String appLog = null;
 
+			String root_settings = SystemProperties.get(ROOT_SETTINGS_PROPERTY, "");
             int root_access = Integer.valueOf(SystemProperties.get(ROOT_ACCESS_PROPERTY, "1"));
-            if (root_access == 0 || root_access == 2) { //disabled / adb only
+            if ("1".equals(root_settings) && ((root_access & 1) != 1)) { //disabled / adb only (even values)
                 allow = 0;
             } else {
 		        // get what we need from the database
