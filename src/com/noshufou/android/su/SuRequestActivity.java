@@ -54,9 +54,9 @@ import java.io.OutputStream;
 
 public class SuRequestActivity extends Activity implements OnClickListener {
     private static final String TAG = "Su.SuRequestActivity";
-    private static final String ROOT_ACCESS_PROPERTY = "persist.sys.root_access";
+    private static final String ROOT_ACCESS_PROPERTY = "persist.sys.clean.root";
     private static final String ROOT_ACCESS_DEFAULT = "0";
-    private static final String ROOT_SETTINGS_PROPERTY = "ro.root.settings";
+    private static final String ROOT_SETTINGS_PROPERTY = "ro.clean.root";
 
     private LocalSocket mSocket;
     private SharedPreferences mPrefs;

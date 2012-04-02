@@ -44,9 +44,9 @@ public class ResultService extends IntentService {
     private static final int COLUMN_NOTIFICATIONS = 2;
     private static final int COLUMN_LOGGING = 3;
 
-    private static final String ROOT_ACCESS_PROPERTY = "persist.sys.root_access";
+    private static final String ROOT_ACCESS_PROPERTY = "persist.sys.clean.root";
     private static final String ROOT_ACCESS_DEFAULT = "0";
-    private static final String ROOT_SETTINGS_PROPERTY = "ro.root.settings";
+    private static final String ROOT_SETTINGS_PROPERTY = "ro.clean.root";
 
     // TODO: Add in a license check here
 //    private boolean mLicenseChecked = false;
